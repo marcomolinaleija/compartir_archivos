@@ -23,17 +23,15 @@ addon_info = {
 	"addon_summary": "compartir_archivos",
 	# Add-on description
 	# Translators: Long description to be shown for this add-on on add-on information from add-ons manager
-	"addon_description": """Complemento para enviar archivos a marco-ml.com y obtener un enlace para compartir.
-	El archivo se elimina tras la descarga
-	""",
+	"addon_description": """Complemento para enviar archivos a marco-ml.com y obtener un enlace para compartir.""",
 	# version
-	"addon_version": "1.1",
+	"addon_version": "2.0",
 	# Author(s)
-	"addon_author": "marco leija <marcomolinaleija@hotmail.com>",
+	"addon_author": "marco leija <marcoleija@marco-ml.com>",
 	# URL for the add-on documentation support
-	"addon_url": None,
+	"addon_url": "https://github.com/marcomolinaleija/compartir_archivos",
 	# URL for the add-on repository where the source code can be found
-	"addon_sourceURL": None,
+	"addon_sourceURL": "https://github.com/marcomolinaleija/compartir_archivos",
 	# Documentation file name
 	"addon_docFileName": "readme.html",
 	# Minimum NVDA version supported (e.g. "2018.3.0", minor version is optional)

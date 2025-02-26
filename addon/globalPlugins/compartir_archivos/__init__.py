@@ -442,7 +442,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			label="Vicitar términos y condiciones",
 			url=""  # URL vacía, manejaremos el clic manualmente
 		)
-		terms_link.Bind(wx.adv.EVT_HYPERLINK, lambda evt: webbrowser.open("https://marco-ml.com/tc.html"))
+		terms_link.Bind(wx.adv.EVT_HYPERLINK, lambda evt: webbrowser.open("https://marco-ml.com/files/api/terms.html"))
 		terms_sizer.Add(terms_link, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 10)
 
 		main_sizer.Add(terms_sizer, 0, wx.EXPAND|wx.ALL, 5)
