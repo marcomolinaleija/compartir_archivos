@@ -11,6 +11,8 @@ import zipfile
 import tempfile
 from datetime import datetime
 import globalPluginHandler
+import globalVars
+
 import threading
 from scriptHandler import script
 
@@ -19,7 +21,12 @@ lib_dir = os.path.join(os.path.dirname(__file__), "lib")
 if lib_dir not in sys.path:
 	sys.path.insert(0, lib_dir)
 from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
+def disableInSecureMode(decoratedCls):
+	if globalVars.appArgs.secure:
+		return globalPluginHandler.GlobalPlugin
+	return decoratedCls
 
+@disableInSecureMode
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def __init__(self):
