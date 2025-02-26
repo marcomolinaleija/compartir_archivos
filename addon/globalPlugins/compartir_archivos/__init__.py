@@ -153,7 +153,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		try:
 			# Cargar historial
 			if not os.path.exists(self.history_file_path):
-				wx.MessageBox("No hay historial de enlaces.", "Información", wx.ICON_INFORMATION)
+				wx.MessageBox("No hay historial de archivos.", "Información", wx.ICON_INFORMATION)
 				return
 
 			with open(self.history_file_path, 'r') as f:
@@ -257,7 +257,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		"""
 		selected_item = list_ctrl.GetFirstSelected()
 		if selected_item == -1:
-			wx.MessageBox("Por favor, seleccione un enlace para eliminar", "Información", wx.ICON_INFORMATION)
+			wx.MessageBox("Por favor, seleccione un archivo para eliminar", "Información", wx.ICON_INFORMATION)
 			return
 
 		try:
@@ -278,7 +278,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			# Actualizar la vista
 			self.refresh_history(list_ctrl)
 
-			wx.MessageBox("Enlace eliminado del historial", "Información", wx.ICON_INFORMATION)
+			wx.MessageBox("Archivo eliminado del historial", "Información", wx.ICON_INFORMATION)
 		except Exception as e:
 			wx.MessageBox(f"Error eliminando archivo: {str(e)}", "Error", wx.ICON_ERROR)
 
@@ -329,7 +329,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			None,
 			"Guardar archivo ZIP como",
 			defaultDir=os.path.expanduser("~\\Documents"),
-			defaultFile="archivos_compartidos.zip",
+			defaultFile="archivos.zip",
 			wildcard="Archivos ZIP (*.zip)|*.zip",
 			style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
 		) as saveDialog:
@@ -338,7 +338,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				return None
 		
 			zip_path = saveDialog.GetPath()
-
+		
 			try:
 				# Mostrar diálogo de progreso
 				progress_dialog = wx.ProgressDialog(
@@ -414,7 +414,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		
 		# Panel para el nombre personalizado
 		name_sizer = wx.BoxSizer(wx.HORIZONTAL)
-		name_label = wx.StaticText(dialog, label="&Nombre personalizado (opcional):")
+		name_label = wx.StaticText(dialog, label="Nombre personalizado (opcional):")
 		name_sizer.Add(name_label, 0, wx.ALL, 5)
 		name_ctrl = wx.TextCtrl(dialog)
 		name_sizer.Add(name_ctrl, 1, wx.EXPAND|wx.ALL, 5)
@@ -422,7 +422,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 		# Panel para la expiración
 		expire_sizer = wx.BoxSizer(wx.HORIZONTAL)
-		expire_label = wx.StaticText(dialog, label="&Tiempo de expiración (horas):")
+		expire_label = wx.StaticText(dialog, label="Tiempo de expiración (horas):")
 		expire_sizer.Add(expire_label, 0, wx.ALL, 5)
 		expire_ctrl = wx.SpinCtrl(dialog, min=1, max=168, initial=24)
 		expire_sizer.Add(expire_ctrl, 0, wx.ALL, 5)
@@ -430,19 +430,47 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 		info_text = wx.StaticText(dialog, label="Si no especifica un tiempo de expiración, se usarán 24 horas por defecto.")
 		main_sizer.Add(info_text, 0, wx.ALL, 5)
+		# Checkbox para los términos y condiciones
+		terms_sizer = wx.BoxSizer(wx.HORIZONTAL)
+		terms_checkbox = wx.CheckBox(dialog, label="Declaro haber leído y aceptado los términos y condiciones.")
+		terms_sizer.Add(terms_checkbox, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 10)
 
+		# Enlace a los términos y condiciones
+		terms_link = wx.adv.HyperlinkCtrl(
+			dialog, 
+			id=wx.ID_ANY,
+			label="Vicitar términos y condiciones",
+			url=""  # URL vacía, manejaremos el clic manualmente
+		)
+		terms_link.Bind(wx.adv.EVT_HYPERLINK, lambda evt: webbrowser.open("https://marco-ml.com/tc.html"))
+		terms_sizer.Add(terms_link, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 10)
+
+		main_sizer.Add(terms_sizer, 0, wx.EXPAND|wx.ALL, 5)
+		
 		button_sizer = wx.BoxSizer(wx.HORIZONTAL)
 		ok_button = wx.Button(dialog, wx.ID_OK, "&Subir")
-		cancel_button = wx.Button(dialog, wx.ID_CANCEL, "&Cancelar")
+		ok_button.Disable()
+		cancel_button = wx.Button(dialog, wx.ID_CANCEL, "Cancelar")
 		button_sizer.Add(ok_button, 0, wx.ALL, 5)
 		button_sizer.Add(cancel_button, 0, wx.ALL, 5)
 		main_sizer.Add(button_sizer, 0, wx.ALIGN_CENTER|wx.ALL, 5)
 
+		def on_checkbox_change(event):
+			ok_button.Enable(terms_checkbox.GetValue())
+
+		terms_checkbox.Bind(wx.EVT_CHECKBOX, on_checkbox_change)
 		dialog.SetSizer(main_sizer)
 		dialog.Fit()
 		
 		while True:
 			if dialog.ShowModal() == wx.ID_OK:
+				if not terms_checkbox.GetValue():
+					wx.MessageBox(
+						"Debes aceptar los términos y condiciones para continuar.",
+						"Términos y condiciones",
+						wx.ICON_EXCLAMATION
+					)
+					continue
 				custom_name = name_ctrl.GetValue().strip()
 				expire_hours = expire_ctrl.GetValue()
 				
